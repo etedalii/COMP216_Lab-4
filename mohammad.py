@@ -1,8 +1,3 @@
-from doctest import master
-from logging import PlaceHolder
-from re import T
-from select import select
-from textwrap import fill
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
@@ -10,11 +5,10 @@ from tkinter import messagebox
 from tkinter.ttk import *
 import tkinter.ttk as ttk
 
-
 class App(tk.Frame):
     def __init__(self, master) -> None:
         tk.Frame.__init__(self, master, height=42, width=42)
-        #master.resizable(False, False)
+        master.resizable(False, False)
         self.radioVar = StringVar()
         self.myColor = '#57D2A9'
         master.title('Centennial College')
