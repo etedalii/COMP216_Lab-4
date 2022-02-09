@@ -1,5 +1,6 @@
 from logging import PlaceHolder
 from re import T
+from select import select
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
@@ -14,7 +15,7 @@ class App(Tk):
     def __init__(self) -> None:
         Tk.__init__(self)
         self.resizable(False, False)
-        self.radioVar = IntVar()
+        self.radioVar = StringVar()
         self.myColor = '#57D2A9'
         self.title('Centennial College')
         Canvas(width=500, height=350).pack()
@@ -46,11 +47,11 @@ class App(Tk):
 
         Label(parent, text='Residency:', background=self.myColor).place(
             relx=0.01, rely=0.3)
-        self.radioVar.set(1)
+        self.radioVar.set('dom')
         Radiobutton(parent, text="Domestic", variable=self.radioVar, value='dom',
-                         command=self.sel, style='Wild.TRadiobutton').place(relx=0.3, rely=0.3)
+                    style='Wild.TRadiobutton').place(relx=0.3, rely=0.3)
         Radiobutton(parent, text="International", variable=self.radioVar, value='intl',
-                         command=self.sel, style='Wild.TRadiobutton').place(relx=0.3, rely=0.36)
+                    style='Wild.TRadiobutton').place(relx=0.3, rely=0.36)
 
         Label(parent, text='Program:', background=self.myColor).place(
             relx=0.01, rely=0.42)
@@ -67,52 +68,75 @@ class App(Tk):
             relx=0.01, rely=0.52)
 
         # checkbox
-        self.var1 = tk.IntVar()
-        self.var2 = tk.IntVar()
-        self.var3 = tk.IntVar()
+        self.var1 = tk.StringVar()
+        self.var2 = tk.StringVar()
+        self.var3 = tk.StringVar()
         self.var1.set('COMP100')
         tk.Checkbutton(parent, text='Programming I', variable=self.var1, onvalue='COMP100',
-                       offvalue=0, command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.52)
+                       offvalue='', command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.52)
         tk.Checkbutton(parent, text='Web Page Design', variable=self.var2, onvalue='COMP213',
-                       offvalue=0, command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.61)
+                       offvalue='', command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.61)
         tk.Checkbutton(parent, text='Software Engineering', variable=self.var3, onvalue='COMP120',
-                       offvalue=0, command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.70)
+                       offvalue='', command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.70)
 
         Button(parent, text='Reset', command=self.display_info).place(
             relx=0.04, rely=.80, width=120)
         Button(parent, text='Ok', command=self.display_info).place(
             relx=0.30, rely=.80, width=160)
-        Button(parent, text='Exit', command=self.display_info).place(
+        Button(parent, text='Exit', command=self.teminate_app).place(
             relx=0.65, rely=.80, width=120)
 
     def checkbox_selection(self):
-        pass
-        # if (self.var1.get() == 1) & (self.var2.get() == 0):
-        # self.
-        # elif (self.var1.get() == 0) & (self.var2.get() == 1):
-        #     l.config(text='I love C++')
-        # elif (var1.get() == 0) & (var2.get() == 0):
-        #     l.config(text='I do not anything')
-        # else:
-        #     l.config(text='I love both')
+        print(self.var1.get())
+        print(self.var2.get())
+        print(self.var2.get())
+        listx = list(self.__checkbox_lst)
+        if (self.var1.get() == 'COMP100'):
+            if len(listx) > 0:
+                listx.append(self.var1.get())
+            else:
+                listx.append(self.var1.get())
+        elif (self.var1.get() == ''):
+            if len(listx) > 0:
+                if 'COMP100' in listx:
+                    listx.remove('COMP100')
 
-    def sel(self):
-        selection = "You selected the option " + str(self.radioVar.get())
-        #label.config(text = selection)
+        if (self.var2.get() == 'COMP213'):
+            if len(listx) > 0:
+                listx.append(self.var2.get())
+            else:
+                listx.append(self.var2.get())
+        elif (self.var2.get() == ''):
+            if len(listx) > 0:
+                 if 'COMP213' in listx:
+                    listx.remove('COMP213')
+
+        if (self.var3.get() == 'COMP120'):
+            if len(listx) > 0:
+                listx.append(self.var3.get())
+            else:
+                listx.append(self.var3.get())
+        elif (self.var3.get() == ''):
+            if len(listx) > 0:
+                 if 'COMP120' in listx:
+                    listx.remove('COMP120')
+
+        self.__checkbox_lst = tuple(listx)
 
     def comboSel(self, event):
         print(event.get())
 
     def create_vars(self):
-        '''
-        create all the text variables
-        '''
-        self.__from_title = StringVar()
+        self.__checkbox_lst = ()
         self.__fullname = StringVar()
         self.__fullname.set('Mohammad Etedali')
 
     def display_info(self):
-        messagebox.showinfo('an important message', self.__fullname.get())
+        messagebox.showinfo(
+            'Information', f'{ self.__fullname.get()}\r\n{self.variable.get()}\r\n{str(self.radioVar.get())}\r\n{self.__checkbox_lst}')
+
+    def teminate_app(self):
+        self.quit()
 
 
 # test harness
