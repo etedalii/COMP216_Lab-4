@@ -1,6 +1,8 @@
+from doctest import master
 from logging import PlaceHolder
 from re import T
 from select import select
+from textwrap import fill
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
@@ -8,18 +10,16 @@ from tkinter import messagebox
 from tkinter.ttk import *
 import tkinter.ttk as ttk
 
-from click import command
 
-
-class App(Tk):
-    def __init__(self) -> None:
-        Tk.__init__(self)
-        self.resizable(False, False)
+class App(tk.Frame):
+    def __init__(self, master) -> None:
+        tk.Frame.__init__(self, master, height=42, width=42)
+        #master.resizable(False, False)
         self.radioVar = StringVar()
         self.myColor = '#57D2A9'
-        self.title('Centennial College')
+        master.title('Centennial College')
         Canvas(width=500, height=350).pack()
-        container = Frame(self, relief='groove', padding=(0, 0))
+        container = Frame(master, relief='groove', padding=(0, 0))
         container.place(
             relx=0.02,
             rely=0.03,
@@ -35,7 +35,7 @@ class App(Tk):
 
     def create_styles(self):
         style = Style()
-        style.configure('TFrame', background='#57D2A9')
+        style.configure('TFrame', background=self.myColor)
 
     def create_ui(self, parent):
         Label(parent, text='ICET Student Survey', font=(
@@ -55,23 +55,26 @@ class App(Tk):
 
         Label(parent, text='Program:', background=self.myColor).place(
             relx=0.01, rely=0.42)
-        # create a combobox
+
+        # create a combobox ***************
         self.variable = tk.StringVar()
-        program_cb = ttk.Combobox(
+        self.program_cb = ttk.Combobox(
             parent, textvariable=self.variable, state='readonly')
-        program_cb['values'] = ('Health', 'Networking', 'IT Project')
-        program_cb.grid(column=0, row=5, padx=142, pady=145)
-        program_cb.current(0)
-        program_cb.bind('<<ComboboxSelected>>', self.comboSel)
+        self.program_cb['values'] = (
+            'Health', 'Networking', 'IT Project', 'AI')
+        #self.program_cb.grid(column=0, row=5, padx=142, pady=165)
+        self.program_cb.current(0)
+        self.program_cb.place(x=145, y=160)
 
         Label(parent, text='Courses:', background=self.myColor).place(
             relx=0.01, rely=0.52)
 
-        # checkbox
+        # checkbox ****************
         self.var1 = tk.StringVar()
         self.var2 = tk.StringVar()
         self.var3 = tk.StringVar()
         self.var1.set('COMP100')
+        self.__checkbox_lst = tuple(['COMP100'])
         tk.Checkbutton(parent, text='Programming I', variable=self.var1, onvalue='COMP100',
                        offvalue='', command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.52)
         tk.Checkbutton(parent, text='Web Page Design', variable=self.var2, onvalue='COMP213',
@@ -79,7 +82,8 @@ class App(Tk):
         tk.Checkbutton(parent, text='Software Engineering', variable=self.var3, onvalue='COMP120',
                        offvalue='', command=self.checkbox_selection, background=self.myColor).place(relx=0.29, rely=0.70)
 
-        Button(parent, text='Reset', command=self.display_info).place(
+        # buttons ************
+        Button(parent, text='Reset', command=self.reset).place(
             relx=0.04, rely=.80, width=120)
         Button(parent, text='Ok', command=self.display_info).place(
             relx=0.30, rely=.80, width=160)
@@ -87,13 +91,11 @@ class App(Tk):
             relx=0.65, rely=.80, width=120)
 
     def checkbox_selection(self):
-        print(self.var1.get())
-        print(self.var2.get())
-        print(self.var2.get())
         listx = list(self.__checkbox_lst)
         if (self.var1.get() == 'COMP100'):
             if len(listx) > 0:
-                listx.append(self.var1.get())
+                if self.var1.get() not in listx:
+                    listx.append(self.var1.get())
             else:
                 listx.append(self.var1.get())
         elif (self.var1.get() == ''):
@@ -103,28 +105,27 @@ class App(Tk):
 
         if (self.var2.get() == 'COMP213'):
             if len(listx) > 0:
-                listx.append(self.var2.get())
+                if self.var2.get() not in listx:
+                    listx.append(self.var2.get())
             else:
                 listx.append(self.var2.get())
         elif (self.var2.get() == ''):
             if len(listx) > 0:
-                 if 'COMP213' in listx:
+                if 'COMP213' in listx:
                     listx.remove('COMP213')
 
         if (self.var3.get() == 'COMP120'):
             if len(listx) > 0:
-                listx.append(self.var3.get())
+                if self.var3.get() not in listx:
+                    listx.append(self.var3.get())
             else:
                 listx.append(self.var3.get())
         elif (self.var3.get() == ''):
             if len(listx) > 0:
-                 if 'COMP120' in listx:
+                if 'COMP120' in listx:
                     listx.remove('COMP120')
 
         self.__checkbox_lst = tuple(listx)
-
-    def comboSel(self, event):
-        print(event.get())
 
     def create_vars(self):
         self.__checkbox_lst = ()
@@ -138,7 +139,21 @@ class App(Tk):
     def teminate_app(self):
         self.quit()
 
+    def reset(self):
+        self.__fullname.set('')
+        self.program_cb.current(0)
+        self.radioVar.set('dom')
+        self.var1.set('0')
+        self.var2.set('0')
+        self.var3.set('0')
+        self.__checkbox_lst = ()
 
-# test harness
-app = App()
-app.mainloop()
+
+def main():
+    root = tk.Tk()
+    App(root).pack(expand=True, fill='both')
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
